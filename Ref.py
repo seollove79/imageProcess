@@ -67,10 +67,8 @@ def getPolygonInnerRgb(target_image, coords):
     # 좌표 출력
     resultRgbList = []
     count = 0
-    for pixel in pixels:
-        if count>=10:
-            break
 
+    for pixel in pixels:
         x, y = pixel[0]
         img = Image.open(target_image)
         pixel_rgb = img.getpixel((x,y))
