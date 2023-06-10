@@ -8,7 +8,7 @@ from datetime import datetime
 import openpyxl
 
 # 이미지 파일 열기
-root_path = "D:\\@temp\\열영상분석\\1.강원도농산물원종장\\1.누에_백견\\1.알\\"
+root_path = "D:\\@temp\\열영상분석\\1.강원도농산물원종장\\1.누에_백견\\2.애벌레\\"
 
 image_folder_name = root_path + "Thermal\\"
 json_folder_name = root_path +  "annotation\\"
@@ -20,9 +20,15 @@ sheet = wb.active
 progress_count = 1
 print(datetime.today())
 for item in image_file_list:
-
     target_file = image_folder_name + item
     img = Image.open(target_file)
+
+    #이미지 exif에서 최소온도, 최대온도를 가져온다.
+    min_max = Ref.get_min_max(img)
+
+    #최소온도와 최대온도에 따라 스케일바를 생성한다.
+    legend_value = Ref.make_legend_value(min_max[0], min_max[1])
+
     json_file = item.rsplit('.')[0] + ".json"
     coodrs_list = Ref.getCoorsFromJsonFile(json_folder_name + json_file)
     temperature_mean_list = ""
@@ -41,7 +47,8 @@ for item in image_file_list:
         temperature_list = []
         for rgb in rgb_list:
             #RGB 값을 온도값으로 바꿔 준다.
-            temperature_list.append(Ref.getTempature(rgb))
+            temperature_list.append(Ref.getTempature(rgb, legend_value))
+
         mean = statistics.mean(temperature_list)
         temperature_mean_list = temperature_mean_list + "|" + str(mean)
 
